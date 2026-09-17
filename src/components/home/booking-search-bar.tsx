@@ -6,7 +6,7 @@ import { ptBR } from "date-fns/locale"
 import { CalendarIcon, Minus, Plus, Search, Users } from "lucide-react"
 import type { DateRange } from "react-day-picker"
 
-import { cn, formatDate } from "@/lib/utils"
+import { cn, formatDate, formatDateOnly } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -23,8 +23,8 @@ export function BookingSearchBar({ className, compact }: BookingSearchBarProps) 
 
   function handleBuscar() {
     const params = new URLSearchParams()
-    if (range?.from) params.set("checkIn", range.from.toISOString().slice(0, 10))
-    if (range?.to) params.set("checkOut", range.to.toISOString().slice(0, 10))
+    if (range?.from) params.set("checkIn", formatDateOnly(range.from))
+    if (range?.to) params.set("checkOut", formatDateOnly(range.to))
     params.set("hospedes", String(hospedes))
     router.push(`/quartos?${params.toString()}`)
   }

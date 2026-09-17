@@ -16,7 +16,21 @@ const VISTA_LABEL: Record<RoomType["vista"], string> = {
   piscina: "Vista piscina",
 }
 
-export function RoomCard({ room, delay = 0 }: { room: RoomType; delay?: number }) {
+interface RoomCardProps {
+  room: RoomType
+  delay?: number
+  /** Unidades livres para o período buscado; omitido quando nenhuma busca foi feita. */
+  quartosDisponiveis?: number
+  /** Query string (checkIn/checkOut/hospedes) a repassar para a página de detalhe. */
+  searchQuery?: string
+}
+
+export function RoomCard({ room, delay = 0, quartosDisponiveis, searchQuery }: RoomCardProps) {
+  const semDisponibilidade = quartosDisponiveis === 0
+  const poucasUnidades =
+    quartosDisponiveis !== undefined && quartosDisponiveis > 0 && quartosDisponiveis <= 2
+  const href = searchQuery ? `/quartos/${room.slug}?${searchQuery}` : `/quartos/${room.slug}`
+
   return (
     <AnimatedSection delay={delay} as="div">
       <Card className="group h-full overflow-hidden py-0 sm:flex-row sm:items-stretch transition-shadow hover:shadow-xl">
@@ -26,11 +40,21 @@ export function RoomCard({ room, delay = 0 }: { room: RoomType; delay?: number }
             alt={room.nome}
             fill
             sizes="(min-width: 640px) 40vw, 100vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            className={`object-cover transition-transform duration-700 group-hover:scale-110 ${semDisponibilidade ? "grayscale" : ""}`}
           />
           <Badge className="absolute left-3 top-3 bg-background/90 text-foreground backdrop-blur">
             {VISTA_LABEL[room.vista]}
           </Badge>
+          {semDisponibilidade && (
+            <Badge variant="destructive" className="absolute right-3 top-3">
+              Sem disponibilidade
+            </Badge>
+          )}
+          {poucasUnidades && (
+            <Badge variant="secondary" className="absolute right-3 top-3">
+              Últimas {quartosDisponiveis} unidades
+            </Badge>
+          )}
         </div>
 
         <div className="flex flex-1 flex-col">
@@ -54,7 +78,7 @@ export function RoomCard({ room, delay = 0 }: { room: RoomType; delay?: number }
               </span>
               <span className="text-xs text-muted-foreground"> /diária</span>
             </div>
-            <Button size="sm" className="gap-1" render={<Link href={`/quartos/${room.slug}`} />} nativeButton={false}>
+            <Button size="sm" className="gap-1" render={<Link href={href} />} nativeButton={false}>
               Ver detalhes <ArrowRight className="size-3.5" />
             </Button>
           </CardFooter>

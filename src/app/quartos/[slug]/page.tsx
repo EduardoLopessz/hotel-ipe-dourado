@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 
 interface RoomPageProps {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ checkIn?: string; checkOut?: string; hospedes?: string }>
 }
 
 const VISTA_LABEL: Record<string, string> = {
@@ -30,8 +31,9 @@ export async function generateMetadata({ params }: RoomPageProps): Promise<Metad
   }
 }
 
-export default async function RoomPage({ params }: RoomPageProps) {
+export default async function RoomPage({ params, searchParams }: RoomPageProps) {
   const { slug } = await params
+  const { checkIn, checkOut, hospedes } = await searchParams
   const room = await getRoomTypeBySlug(slug)
 
   if (!room) {
@@ -86,7 +88,12 @@ export default async function RoomPage({ params }: RoomPageProps) {
         </div>
 
         <div>
-          <RoomBookingWidget room={room} />
+          <RoomBookingWidget
+            room={room}
+            initialCheckIn={checkIn}
+            initialCheckOut={checkOut}
+            initialHospedes={hospedes ? Number(hospedes) : undefined}
+          />
         </div>
       </div>
     </div>

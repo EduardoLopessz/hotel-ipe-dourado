@@ -8,21 +8,46 @@ import type { DateRange } from "react-day-picker"
 
 import { TAXA_LIMPEZA } from "@/lib/constants"
 import type { RoomType } from "@/lib/types"
-import { formatCurrency, formatDate, nightsBetween } from "@/lib/utils"
+import { formatCurrency, formatDate, formatDateOnly, nightsBetween } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 
-export function RoomBookingWidget({ room }: { room: RoomType }) {
+function parseDateOnly(value?: string): Date | undefined {
+  if (!value) return undefined
+  const [year, month, day] = value.split("-").map(Number)
+  if (!year || !month || !day) return undefined
+  return new Date(year, month - 1, day)
+}
+
+interface RoomBookingWidgetProps {
+  room: RoomType
+  initialCheckIn?: string
+  initialCheckOut?: string
+  initialHospedes?: number
+}
+
+export function RoomBookingWidget({
+  room,
+  initialCheckIn,
+  initialCheckOut,
+  initialHospedes,
+}: RoomBookingWidgetProps) {
   const router = useRouter()
-  const [range, setRange] = useState<DateRange | undefined>()
-  const [hospedes, setHospedes] = useState(Math.min(2, room.capacidade))
+  const [range, setRange] = useState<DateRange | undefined>(() => {
+    const from = parseDateOnly(initialCheckIn)
+    const to = parseDateOnly(initialCheckOut)
+    return from ? { from, to } : undefined
+  })
+  const [hospedes, setHospedes] = useState(
+    Math.min(initialHospedes && initialHospedes > 0 ? initialHospedes : 2, room.capacidade)
+  )
 
   const noites = useMemo(() => {
     if (!range?.from || !range?.to) return 0
-    return nightsBetween(range.from.toISOString(), range.to.toISOString())
+    return nightsBetween(formatDateOnly(range.from), formatDateOnly(range.to))
   }, [range])
 
   const subtotal = noites * room.precoDiaria
@@ -30,8 +55,8 @@ export function RoomBookingWidget({ room }: { room: RoomType }) {
 
   function handleReservar() {
     const params = new URLSearchParams()
-    if (range?.from) params.set("checkIn", range.from.toISOString().slice(0, 10))
-    if (range?.to) params.set("checkOut", range.to.toISOString().slice(0, 10))
+    if (range?.from) params.set("checkIn", formatDateOnly(range.from))
+    if (range?.to) params.set("checkOut", formatDateOnly(range.to))
     params.set("hospedes", String(hospedes))
     router.push(`/reservar/${room.id}?${params.toString()}`)
   }

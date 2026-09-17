@@ -52,6 +52,8 @@ export const perfilSchema = z.object({
     .max(15, "Informe um telefone válido"),
 })
 
+export type PerfilInput = z.infer<typeof perfilSchema>
+
 export const bookingSchema = z
   .object({
     roomTypeId: z.string().min(1),

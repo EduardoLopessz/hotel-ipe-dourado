@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { LogOut, User as UserIcon, CalendarCheck } from "lucide-react"
+import { LogOut, User as UserIcon, CalendarCheck, ShieldCheck } from "lucide-react"
 import { toast } from "sonner"
 
 import { useAuth } from "@/components/providers/auth-provider"
+import { useIsAdmin } from "@/hooks/use-is-admin"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,6 +20,7 @@ import {
 
 export function UserMenu() {
   const { user, loading, sair } = useAuth()
+  const { isAdmin } = useIsAdmin()
   const router = useRouter()
 
   if (loading) {
@@ -70,6 +72,11 @@ export function UserMenu() {
         <DropdownMenuItem render={<Link href="/minha-conta/reservas" />}>
           <CalendarCheck /> Minhas reservas
         </DropdownMenuItem>
+        {isAdmin && (
+          <DropdownMenuItem render={<Link href="/admin" />}>
+            <ShieldCheck /> Painel administrativo
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onClick={handleSair}>
           <LogOut /> Sair

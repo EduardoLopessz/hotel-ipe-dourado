@@ -1,6 +1,7 @@
 "use server"
 
-import { adminAuth, adminDb, isFirebaseAdminConfigured } from "@/lib/firebase/admin"
+import { adminAuth } from "@/lib/firebase/admin-auth"
+import { adminDb, isFirebaseAdminConfigured } from "@/lib/firebase/admin"
 import type { ReservationStatus } from "@/lib/types"
 
 async function assertIsAdmin(idToken: string) {

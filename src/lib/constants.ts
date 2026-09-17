@@ -146,7 +146,7 @@ export const AMENITIES: Amenity[] = [
     descricao:
       "Piscina de borda infinita com vista para o mar, bar molhado e espreguiçadeiras premium.",
     icone: "Waves",
-    imagem: unsplash("1611892440504-42a792e24d32"),
+    imagem: unsplash("1584132967334-10e028bd69f7"),
   },
   {
     id: "spa",
@@ -154,7 +154,7 @@ export const AMENITIES: Amenity[] = [
     descricao:
       "Circuito de bem-estar completo com massagens, hidroterapia e terapias inspiradas na Mata Atlântica.",
     icone: "Sparkles",
-    imagem: unsplash("1584132967334-10e028bd69f7"),
+    imagem: unsplash("1544161515-4ab6ce6db874"),
   },
   {
     id: "restaurante",
@@ -170,7 +170,7 @@ export const AMENITIES: Amenity[] = [
     descricao:
       "Espaço fitness completo com equipamentos de última geração e aulas funcionais ao ar livre.",
     icone: "Dumbbell",
-    imagem: unsplash("1544148103-0773bf10d330"),
+    imagem: unsplash("1534438327276-14e5300c3a48"),
   },
   {
     id: "praia",
@@ -186,7 +186,7 @@ export const AMENITIES: Amenity[] = [
     descricao:
       "Trilhas guiadas por guias credenciados, com cachoeiras, mirantes e observação de fauna nativa.",
     icone: "Mountain",
-    imagem: unsplash("1445019980597-93fa8acb246c"),
+    imagem: unsplash("1665678473650-b4d8c79b02b7"),
   },
 ]
 

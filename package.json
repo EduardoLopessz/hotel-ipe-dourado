@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed.ts",
+    "deploy-rules": "tsx scripts/deploy-rules.ts",
     "set-admin": "tsx scripts/set-admin.ts"
   },
   "dependencies": {

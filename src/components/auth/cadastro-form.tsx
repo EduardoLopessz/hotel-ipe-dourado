@@ -9,6 +9,7 @@ import { Loader2, MapPin } from "lucide-react"
 import { toast } from "sonner"
 
 import { useAuth } from "@/components/providers/auth-provider"
+import { posthog } from "@/lib/posthog/client"
 import { useCep } from "@/hooks/use-cep"
 import { cadastroSchema, type CadastroInput } from "@/lib/validations"
 import { Button } from "@/components/ui/button"
@@ -69,6 +70,7 @@ export function CadastroForm() {
         telefone: values.telefone,
         endereco: values.endereco,
       })
+      posthog.capture("signup_completed")
       toast.success("Cadastro realizado com sucesso! Bem-vindo(a) ao Ipê Dourado.")
       router.push("/minha-conta")
     } catch (error) {

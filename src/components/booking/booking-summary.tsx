@@ -9,6 +9,7 @@ import { toast } from "sonner"
 
 import { iniciarReserva } from "@/app/reservar/[roomTypeId]/actions"
 import { useAuth } from "@/components/providers/auth-provider"
+import { posthog } from "@/lib/posthog/client"
 import { TAXA_LIMPEZA } from "@/lib/constants"
 import type { RoomType } from "@/lib/types"
 import { formatCurrency, formatDate, nightsBetween } from "@/lib/utils"
@@ -37,6 +38,7 @@ export function BookingSummary({ room, checkIn, checkOut, hospedes }: BookingSum
   async function handleConfirmar() {
     if (!user) return
     setSubmitting(true)
+    posthog.capture("booking_started", { roomTypeId: room.id, noites, hospedes })
     try {
       const result = await iniciarReserva({
         userId: user.uid,
@@ -55,6 +57,7 @@ export function BookingSummary({ room, checkIn, checkOut, hospedes }: BookingSum
         return
       }
 
+      posthog.capture("booking_completed", { roomTypeId: room.id, valorTotal: total })
       router.push(result.redirectUrl)
     } catch {
       toast.error("Não foi possível concluir a reserva. Tente novamente.")

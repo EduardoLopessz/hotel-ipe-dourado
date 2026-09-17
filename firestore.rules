@@ -1,0 +1,58 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // users/{userId} — cada usuário só lê/edita seu próprio documento.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+
+      // addresses/{addressId} — subcoleção de endereços do usuário.
+      match /addresses/{addressId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // roomTypes — leitura pública, escrita restrita a administradores.
+    match /roomTypes/{roomTypeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // rooms — leitura pública, escrita restrita a administradores.
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // amenities — leitura pública, escrita restrita a administradores.
+    match /amenities/{amenityId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // reservations/{reservationId} — cada usuário só lê/edita suas
+    // próprias reservas. A criação exige que o userId do documento seja o
+    // do próprio usuário autenticado; administradores têm acesso total
+    // (necessário para o painel administrativo e para os webhooks, que
+    // usam o Admin SDK e ignoram as regras de segurança).
+    match /reservations/{reservationId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if isOwner(request.resource.data.userId);
+      allow update: if isOwner(resource.data.userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}

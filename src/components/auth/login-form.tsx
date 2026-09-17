@@ -10,6 +10,7 @@ import { toast } from "sonner"
 
 import { verificarLimiteLogin } from "@/app/login/actions"
 import { useAuth } from "@/components/providers/auth-provider"
+import { posthog } from "@/lib/posthog/client"
 import { loginSchema, type LoginInput } from "@/lib/validations"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -57,6 +58,7 @@ export function LoginForm() {
       }
 
       await entrar(values.email, values.senha)
+      posthog.capture("login_completed", { method: "email" })
       toast.success("Bem-vindo(a) de volta!")
       router.push(redirectTo)
     } catch (error) {
@@ -71,6 +73,7 @@ export function LoginForm() {
     setSubmitting(true)
     try {
       await entrarComGoogle()
+      posthog.capture("login_completed", { method: "google" })
       toast.success("Bem-vindo(a)!")
       router.push(redirectTo)
     } catch {

@@ -62,11 +62,13 @@ export function RoomBookingWidget({
   }
 
   return (
-    <Card className="sticky top-24 shadow-lg">
-      <CardContent className="space-y-4">
+    <Card className="shadow-lg lg:sticky lg:top-24">
+      <CardContent className="space-y-3 px-4 py-4 sm:space-y-4 sm:px-6 sm:py-6">
         <div className="flex items-baseline justify-between">
           <div>
-            <span className="text-2xl font-semibold">{formatCurrency(room.precoDiaria)}</span>
+            <span className="text-xl font-semibold sm:text-2xl">
+              {formatCurrency(room.precoDiaria)}
+            </span>
             <span className="text-sm text-muted-foreground"> /diária</span>
           </div>
         </div>
@@ -76,7 +78,7 @@ export function RoomBookingWidget({
             render={
               <Button
                 variant="outline"
-                className="h-12 w-full justify-start gap-2 text-left font-normal"
+                className="h-10 w-full justify-start gap-2 text-left font-normal sm:h-12"
               />
             }
           >
@@ -99,7 +101,7 @@ export function RoomBookingWidget({
           </PopoverContent>
         </Popover>
 
-        <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
+        <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2 sm:px-4 sm:py-3">
           <span className="text-sm font-medium">Hóspedes</span>
           <div className="flex items-center gap-3">
             <Button
@@ -123,7 +125,7 @@ export function RoomBookingWidget({
         </div>
 
         {noites > 0 && (
-          <div className="space-y-2 text-sm">
+          <div className="space-y-1.5 text-sm sm:space-y-2">
             <Separator />
             <div className="flex justify-between text-muted-foreground">
               <span>
@@ -143,11 +145,14 @@ export function RoomBookingWidget({
           </div>
         )}
 
-        <Button size="lg" className="w-full" disabled={noites === 0} onClick={handleReservar}>
+        <Button
+          size="lg"
+          className="h-10 w-full sm:h-11"
+          disabled={noites === 0}
+          onClick={handleReservar}
+        >
           {noites === 0 ? "Selecione as datas" : "Reservar agora"}
         </Button>
-
-        <p className="text-center text-xs text-muted-foreground">{room.politicaCancelamento}</p>
       </CardContent>
     </Card>
   )

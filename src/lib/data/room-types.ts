@@ -31,3 +31,8 @@ export async function getRoomTypeBySlug(slug: string): Promise<RoomType | null> 
   const roomTypes = await getRoomTypes()
   return roomTypes.find((room) => room.slug === slug) ?? null
 }
+
+export async function getRoomTypeById(id: string): Promise<RoomType | null> {
+  const roomTypes = await getRoomTypes()
+  return roomTypes.find((room) => room.id === id) ?? null
+}

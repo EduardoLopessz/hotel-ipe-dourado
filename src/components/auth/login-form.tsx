@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
+import { verificarLimiteLogin } from "@/app/login/actions"
 import { useAuth } from "@/components/providers/auth-provider"
 import { loginSchema, type LoginInput } from "@/lib/validations"
 import { Button } from "@/components/ui/button"
@@ -36,6 +37,8 @@ function friendlyAuthError(code: string): string {
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get("redirect") || "/minha-conta"
   const { entrar, entrarComGoogle } = useAuth()
   const [submitting, setSubmitting] = useState(false)
 
@@ -47,9 +50,15 @@ export function LoginForm() {
   async function onSubmit(values: LoginInput) {
     setSubmitting(true)
     try {
+      const { permitido } = await verificarLimiteLogin(values.email)
+      if (!permitido) {
+        toast.error("Muitas tentativas de login. Aguarde um minuto e tente novamente.")
+        return
+      }
+
       await entrar(values.email, values.senha)
       toast.success("Bem-vindo(a) de volta!")
-      router.push("/minha-conta")
+      router.push(redirectTo)
     } catch (error) {
       const code = (error as { code?: string })?.code ?? ""
       toast.error(code ? friendlyAuthError(code) : "Não foi possível entrar.")
@@ -63,7 +72,7 @@ export function LoginForm() {
     try {
       await entrarComGoogle()
       toast.success("Bem-vindo(a)!")
-      router.push("/minha-conta")
+      router.push(redirectTo)
     } catch {
       toast.error("Não foi possível entrar com o Google.")
     } finally {

@@ -73,3 +73,5 @@ export const contatoSchema = z.object({
   email: z.email("Informe um e-mail válido"),
   mensagem: z.string().min(10, "Escreva uma mensagem com pelo menos 10 caracteres"),
 })
+
+export type ContatoInput = z.infer<typeof contatoSchema>
